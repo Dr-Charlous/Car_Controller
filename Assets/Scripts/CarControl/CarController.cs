@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CarController : MonoBehaviour
 {
@@ -20,32 +21,34 @@ public class CarController : MonoBehaviour
         public Axel Axel;
     }
 
-    public float MaxAcceleration = 30;
-    public float BreakAcceleration = 50;
-
-    public float TurnSensitivity = 1;
-    public float MaxSteeringAngle = 30;
-
-    public Vector3 CenterOfMass;
-
-
-    public List<Wheel> Wheels;
+    [SerializeField] float _steerMaxAngle = 35;
+    [SerializeField] float _slipAngleMax = 120;
+    [SerializeField] float _maxAcceleration = 200;
+    [SerializeField] float _breakAcceleration = 500000;
+    [SerializeField] Vector3 _centerOfMass;
+    [SerializeField] List<Wheel> _wheels;
+    [SerializeField] AnimationCurve _sterringCurve;
 
     float _moveInput;
     float _steeringInput;
+    float _slipAngle;
+    public float Speed { get; private set; }
+    float _brakeInput;
 
     Rigidbody _carRb;
 
     private void Start()
     {
         _carRb = GetComponent<Rigidbody>();
-        _carRb.centerOfMass = CenterOfMass;
+        _carRb.centerOfMass = _centerOfMass;
     }
 
     private void Update()
     {
         GetInputs();
         AnimationWheels();
+
+        Speed = _carRb.velocity.magnitude;
     }
 
     private void FixedUpdate()
@@ -59,49 +62,67 @@ public class CarController : MonoBehaviour
     {
         _moveInput = Input.GetAxis("Vertical");
         _steeringInput = Input.GetAxis("Horizontal");
+
+        _slipAngle = Vector3.Angle(transform.forward, _carRb.velocity - transform.forward);
+
+        float movingDirection = Vector3.Dot(transform.forward, _carRb.velocity);
+        if (movingDirection < -0.5f && _moveInput > 0)
+        {
+            _brakeInput = Mathf.Abs(_moveInput);
+        }
+        else if (movingDirection > 0.5f && _moveInput < 0)
+        {
+            _brakeInput = Mathf.Abs(_moveInput);
+        }
+        else
+        {
+            _brakeInput = 0;
+        }
     }
 
     void Move()
     {
-        foreach (var wheel in Wheels)
+        foreach (var wheel in _wheels)
         {
-            wheel.WheelCollider.motorTorque = _moveInput * 600 * MaxAcceleration * Time.deltaTime;
+            wheel.WheelCollider.motorTorque = _moveInput * _maxAcceleration;
         }
     }
 
     void Steer()
     {
-        foreach(var wheel in Wheels)
+
+        float steeringAngle = _steeringInput * _sterringCurve.Evaluate(Speed);
+        if (_slipAngle < _slipAngleMax)
+        {
+            steeringAngle += Vector3.SignedAngle(transform.forward, _carRb.velocity + transform.forward, Vector3.up);
+        }
+        steeringAngle = Mathf.Clamp(steeringAngle, -_steerMaxAngle, _steerMaxAngle);
+
+        foreach (var wheel in _wheels)
         {
             if (wheel.Axel == Axel.Front)
-            {
-                var steerAngle = _steeringInput * TurnSensitivity * MaxSteeringAngle;
-                wheel.WheelCollider.steerAngle = Mathf.Lerp(wheel.WheelCollider.steerAngle, steerAngle, 0.6f);
-            }
+                wheel.WheelCollider.steerAngle = steeringAngle;
         }
     }
+
 
     void Brake()
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            foreach (var wheel in Wheels)
+            foreach (var wheel in _wheels)
             {
-                wheel.WheelCollider.brakeTorque = 300 * BreakAcceleration * Time.deltaTime;
-            }
-        }
-        else
-        {
-            foreach (var wheel in Wheels)
-            {
-                wheel.WheelCollider.brakeTorque = 0;
+                if (wheel.Axel == Axel.Rear)
+                    wheel.WheelCollider.brakeTorque = _brakeInput * _breakAcceleration * 0.7f;
+                else
+                    wheel.WheelCollider.brakeTorque = _brakeInput * _breakAcceleration * 0.3f;
             }
         }
     }
 
     void AnimationWheels()
     {
-        foreach (var wheel in Wheels)
+        foreach (var wheel in _wheels)
         {
             Quaternion rot;
             Vector3 pos;
