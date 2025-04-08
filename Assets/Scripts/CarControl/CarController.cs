@@ -90,7 +90,6 @@ public class CarController : MonoBehaviour
 
     void Steer()
     {
-
         float steeringAngle = _steeringInput * _sterringCurve.Evaluate(Speed);
         if (_slipAngle < _slipAngleMax)
         {
