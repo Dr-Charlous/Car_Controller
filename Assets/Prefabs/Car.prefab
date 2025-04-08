@@ -4882,7 +4882,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5116608235668968858
 Transform:
   m_ObjectHideFlags: 0
@@ -4943,10 +4943,10 @@ WheelCollider:
   m_Center: {x: -0.025, y: 0, z: 0}
   m_Radius: 4
   m_SuspensionSpring:
-    spring: 8000
-    damper: 2000
+    spring: 6000
+    damper: 1000
     targetPosition: 0.5
-  m_SuspensionDistance: 1
+  m_SuspensionDistance: 2
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -19505,10 +19505,10 @@ WheelCollider:
   m_Center: {x: -0.025, y: 0, z: 0}
   m_Radius: 4
   m_SuspensionSpring:
-    spring: 8000
-    damper: 2000
+    spring: 6000
+    damper: 1000
     targetPosition: 0.5
-  m_SuspensionDistance: 1
+  m_SuspensionDistance: 2
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -19728,21 +19728,21 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 21
-      inSlope: 0.0005990322
-      outSlope: 0.0005990322
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.29149958
-    - serializedVersion: 3
-      time: 2
-      value: 20
+      value: 15
       inSlope: 0
       outSlope: 0
-      tangentMode: 0
+      tangentMode: 34
       weightedMode: 0
       inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 15
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -24732,10 +24732,10 @@ WheelCollider:
   m_Center: {x: -0.025, y: 0, z: 0}
   m_Radius: 4
   m_SuspensionSpring:
-    spring: 8000
-    damper: 2000
+    spring: 6000
+    damper: 1000
     targetPosition: 0.5
-  m_SuspensionDistance: 1
+  m_SuspensionDistance: 2
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -34464,10 +34464,10 @@ WheelCollider:
   m_Center: {x: -0.025, y: 0, z: 0}
   m_Radius: 4
   m_SuspensionSpring:
-    spring: 8000
-    damper: 2000
+    spring: 6000
+    damper: 1000
     targetPosition: 0.5
-  m_SuspensionDistance: 1
+  m_SuspensionDistance: 2
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -39433,7 +39433,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7277158692648085222
 Transform:
   m_ObjectHideFlags: 0
