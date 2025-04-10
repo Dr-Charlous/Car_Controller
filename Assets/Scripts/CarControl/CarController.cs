@@ -114,9 +114,9 @@ public class CarController : MonoBehaviour
         foreach (var wheel in _wheels)
         {
             if (wheel.Axel == Axel.Rear)
-                wheel.WheelCollider.brakeTorque = _brakeInput * _breakAcceleration * 0.5f;
+                wheel.WheelCollider.brakeTorque = _brakeInput * _breakAcceleration * 0.7f;
             else
-                wheel.WheelCollider.brakeTorque = _brakeInput * _breakAcceleration * 0.2f;
+                wheel.WheelCollider.brakeTorque = _brakeInput * _breakAcceleration * 0.3f;
         }
     }
 
