@@ -21,7 +21,7 @@ public class CarControl2 : MonoBehaviour
     //[SerializeField] float _steerMaxAngle = 35;
     //[SerializeField] float _slipAngleMax = 120;
     //[SerializeField] float _maxAcceleration = 200;
-    //[SerializeField] float _breakAcceleration = 500000;
+    //[SerializeField] float _brakeAcceleration = 500000;
     //[SerializeField] Vector3 _centerOfMass;
     //[SerializeField] AnimationCurve _sterringCurve;
 

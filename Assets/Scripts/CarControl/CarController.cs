@@ -22,13 +22,16 @@ public class CarController : MonoBehaviour
     }
     public float Speed { get; private set; }
 
+    [SerializeField] Inputs _inputs;
+    [SerializeField] AnimationCurve _sterringCurve;
+    [SerializeField] Vector3 _centerOfMass;
+    [SerializeField] List<Wheel> _wheels;
     [SerializeField] float _steerMaxAngle = 35;
     [SerializeField] float _slipAngleMax = 120;
     [SerializeField] float _maxAcceleration = 1000;
-    [SerializeField] float _breakAcceleration = 3000;
-    [SerializeField] Vector3 _centerOfMass;
-    [SerializeField] List<Wheel> _wheels;
-    [SerializeField] AnimationCurve _sterringCurve;
+    [SerializeField] float _brakeAcceleration = 3000;
+    [SerializeField] float _brakeFront = 0.3f;
+    [SerializeField] float _brakeRear = 0.7f;
 
     float _moveInput;
     float _steeringInput;
@@ -60,9 +63,19 @@ public class CarController : MonoBehaviour
 
     void GetInputs()
     {
-        _moveInput = Input.GetAxis("Vertical");
-        _steeringInput = Input.GetAxis("Horizontal");
-        _isBreaking = Input.GetKey(KeyCode.Space);
+        //_moveInput = Input.GetAxis("Vertical");
+        //_steeringInput = Input.GetAxis("Horizontal");
+        //_isBreaking = Input.GetKey(KeyCode.Space);
+
+        _moveInput = _inputs.CarControl.Car.Movement.ReadValue<Vector2>().y;
+        _steeringInput = _inputs.CarControl.Car.Movement.ReadValue<Vector2>().x;
+
+        float isBraking = _inputs.CarControl.Car.Brake.ReadValue<float>();
+        Debug.Log(isBraking);
+        if (isBraking != 0)
+            _isBreaking = true;
+        else
+            _isBreaking = false;
     }
 
     void Move()
@@ -114,9 +127,9 @@ public class CarController : MonoBehaviour
         foreach (var wheel in _wheels)
         {
             if (wheel.Axel == Axel.Rear)
-                wheel.WheelCollider.brakeTorque = _brakeInput * _breakAcceleration * 0.7f;
+                wheel.WheelCollider.brakeTorque = _brakeInput * _brakeAcceleration * _brakeRear;
             else
-                wheel.WheelCollider.brakeTorque = _brakeInput * _breakAcceleration * 0.3f;
+                wheel.WheelCollider.brakeTorque = _brakeInput * _brakeAcceleration * _brakeFront;
         }
     }
 
@@ -130,5 +143,15 @@ public class CarController : MonoBehaviour
             wheel.WheelModel.transform.position = pos;
             wheel.WheelModel.transform.rotation = rot;
         }
+    }
+
+    internal void Enable()
+    {
+        throw new NotImplementedException();
+    }
+
+    internal void Disable()
+    {
+        throw new NotImplementedException();
     }
 }
