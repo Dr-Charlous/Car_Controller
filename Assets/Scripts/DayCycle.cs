@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class DayCycle : MonoBehaviour
 {
+    [SerializeField] Transform _rotTransform;
     [SerializeField] Vector3 _speed;
 
     private void Start()
     {
-        transform.rotation = Quaternion.Euler(_speed.normalized * Random.Range(0, 180));
+        _rotTransform.rotation = Quaternion.Euler(_speed.normalized * Random.Range(0, 180));
     }
 
     private void FixedUpdate()
     {
-        transform.Rotate(_speed);
+        _rotTransform.Rotate(_speed);
     }
 }
