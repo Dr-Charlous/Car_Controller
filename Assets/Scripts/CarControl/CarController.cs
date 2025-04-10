@@ -20,11 +20,12 @@ public class CarController : MonoBehaviour
         public WheelCollider WheelCollider;
         public Axel Axel;
     }
+    public float Speed { get; private set; }
 
     [SerializeField] float _steerMaxAngle = 35;
     [SerializeField] float _slipAngleMax = 120;
-    [SerializeField] float _maxAcceleration = 200;
-    [SerializeField] float _breakAcceleration = 500000;
+    [SerializeField] float _maxAcceleration = 1000;
+    [SerializeField] float _breakAcceleration = 3000;
     [SerializeField] Vector3 _centerOfMass;
     [SerializeField] List<Wheel> _wheels;
     [SerializeField] AnimationCurve _sterringCurve;
@@ -32,8 +33,8 @@ public class CarController : MonoBehaviour
     float _moveInput;
     float _steeringInput;
     float _slipAngle;
-    public float Speed { get; private set; }
     float _brakeInput;
+    bool _isBreaking;
 
     Rigidbody _carRb;
 
@@ -55,29 +56,13 @@ public class CarController : MonoBehaviour
     {
         Move();
         Steer();
-        Brake();
     }
 
     void GetInputs()
     {
         _moveInput = Input.GetAxis("Vertical");
         _steeringInput = Input.GetAxis("Horizontal");
-
-        _slipAngle = Vector3.Angle(transform.forward, _carRb.velocity - transform.forward);
-
-        float movingDirection = Vector3.Dot(transform.forward, _carRb.velocity);
-        if (movingDirection < -0.5f && _moveInput > 0)
-        {
-            _brakeInput = Mathf.Abs(_moveInput);
-        }
-        else if (movingDirection > 0.5f && _moveInput < 0)
-        {
-            _brakeInput = Mathf.Abs(_moveInput);
-        }
-        else
-        {
-            _brakeInput = 0;
-        }
+        _isBreaking = Input.GetKey(KeyCode.Space);
     }
 
     void Move()
@@ -86,15 +71,29 @@ public class CarController : MonoBehaviour
         {
             wheel.WheelCollider.motorTorque = _moveInput * _maxAcceleration;
         }
+
+        if (_isBreaking)
+            Brake();
+        else
+        {
+            foreach (var wheel in _wheels)
+            {
+                wheel.WheelCollider.brakeTorque = 0;
+            }
+        }
     }
 
     void Steer()
     {
+        _slipAngle = Vector3.Angle(transform.forward, _carRb.velocity - transform.forward);
+
         float steeringAngle = _steeringInput * _sterringCurve.Evaluate(Speed);
+
         if (_slipAngle < _slipAngleMax)
         {
             steeringAngle += Vector3.SignedAngle(transform.forward, _carRb.velocity + transform.forward, Vector3.up);
         }
+
         steeringAngle = Mathf.Clamp(steeringAngle, -_steerMaxAngle, _steerMaxAngle);
 
         foreach (var wheel in _wheels)
@@ -107,15 +106,17 @@ public class CarController : MonoBehaviour
 
     void Brake()
     {
-        if (Input.GetKey(KeyCode.Space))
+        float movingDirection = Vector3.Dot(transform.forward, _carRb.velocity);
+
+        if (movingDirection != 0)
+            _brakeInput = Mathf.Abs(movingDirection);
+
+        foreach (var wheel in _wheels)
         {
-            foreach (var wheel in _wheels)
-            {
-                if (wheel.Axel == Axel.Rear)
-                    wheel.WheelCollider.brakeTorque = _brakeInput * _breakAcceleration * 0.7f;
-                else
-                    wheel.WheelCollider.brakeTorque = _brakeInput * _breakAcceleration * 0.3f;
-            }
+            if (wheel.Axel == Axel.Rear)
+                wheel.WheelCollider.brakeTorque = _brakeInput * _breakAcceleration * 0.5f;
+            else
+                wheel.WheelCollider.brakeTorque = _brakeInput * _breakAcceleration * 0.2f;
         }
     }
 
