@@ -71,7 +71,7 @@ public class CarController : MonoBehaviour
         _steeringInput = _inputs.CarControl.Car.Movement.ReadValue<Vector2>().x;
 
         float isBraking = _inputs.CarControl.Car.Brake.ReadValue<float>();
-        Debug.Log(isBraking);
+
         if (isBraking != 0)
             _isBreaking = true;
         else

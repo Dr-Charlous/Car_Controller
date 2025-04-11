@@ -1,7 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
+[RequireComponent(typeof(Rigidbody))]
 public class CarSounds : MonoBehaviour
 {
     public float MinSpeed;
@@ -31,7 +31,7 @@ public class CarSounds : MonoBehaviour
         _currentSpeed = _carRb.velocity.magnitude;
         _pitchFromCar = _carRb.velocity.magnitude / 50;
 
-        if (_currentSpeed < MinSpeed )
+        if (_currentSpeed < MinSpeed)
         {
             _carAudio.pitch = MinPitch;
         }
